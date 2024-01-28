@@ -1,12 +1,12 @@
-FROM python:3.10-slim
+FROM anibali/pytorch:2.0.1-cuda11.8
 
-RUN apt-get update -y && apt-get install -y git ffmpeg libavcodec-extra
 
-RUN pip install --upgrade pip
+RUN git clone https://github.com/suno-ai/bark && cd bark && pip install .
+RUN pip install nltk && python -c "import nltk;nltk.download('punkt')"
 
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
+COPY requirements.new.txt requirements.txt
 
 RUN pip install -r requirements.txt
 
@@ -15,4 +15,5 @@ RUN python -c "from model import load;load(True);"
 
 COPY server/api.py api.py
 
+EXPOSE 8000
 CMD ["python", "api.py"]
